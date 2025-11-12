@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys
+import sys, os
 
 import serial
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
@@ -10,7 +10,6 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QWidget,
                               QCheckBox, QDoubleSpinBox)
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6.QtGui import QAction, QIcon
-
 from .tabs import Level1Tab, Level2Tab, Level3Tab, Level4Tab
 from .serial_handler import SerialHandler, SerialMessage, list_serial_ports
 from .can_decoder import CANDecoder
@@ -66,7 +65,6 @@ class ControlDialog(QDialog):
         self.setLayout(layout)
     
     def get_values(self):
-        """Ottieni i valori impostati"""
         return {
             'can_enable': self.can_enable_cb.isChecked(),
             'led3_enable': self.led3_enable_cb.isChecked(),
@@ -87,6 +85,10 @@ class MainWindow(QMainWindow):
         self.serial_handler.message_received.connect(self.on_message_received)
         self.serial_handler.connection_status.connect(self.on_connection_status)
         self.serial_handler.error_occurred.connect(self.on_error)
+
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, "logoGUI.ico")
+        self.setWindowIcon(QIcon(icon_path))
 
         self.setup_ui()
         self.refresh_ports()
